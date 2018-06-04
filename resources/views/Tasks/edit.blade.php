@@ -11,15 +11,15 @@
           
         {!! Form::model($task, ['route' => ['Tasks.update', $task->id], 'method' => 'put']) !!}
 
-       <div class='font-group'>
-            {!! Form::label('content', 'タスク:') !!}
-            {!! Form::text('content',null,['class' => 'font-control']) !!}
-       </div>
-       
-       <div class ='font-group'>
-            {!! Form::label('status','ステータス:')!!}
-            {!! Form::text('status',null,['class'=> 'font-control']) !!}
-        </div>
+           <div class='font-group'>
+                {!! Form::label('content', 'タスク:') !!}
+                {!! Form::text('content',null,['class' => 'font-control']) !!}
+           </div>
+           
+           <div class ='font-group'>
+                {!! Form::label('status','ステータス:')!!}
+                {!! Form::text('status',null,['class'=> 'font-control']) !!}
+            </div>
         
             {!! Form::submit('更新') !!}
 
