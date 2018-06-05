@@ -13,7 +13,9 @@
         
         <tr>
            <th>ステータス</th>
-           <td>{{ $task->status }}</td>>
+           <td>{{ $task->status }}</td>
+        </tr>
+    </table>
    {!! link_to_route('Tasks.edit', 'このタスクを編集', ['id' => $task->id],['class' => 'btn btn-default']) !!}
 
 
