@@ -17,11 +17,24 @@ class TasksController extends Controller
      */
     public function index()
     {
-        $tasks = Task::all();
-
-        return view('Tasks.index', [
-            'tasks' => $tasks,
-        ]);
+        $data=[];
+        if(\Auth::check()){
+            $user=\Auth::user();
+            $tasks=$user->tasks()->orderBy('created_at','desc')->paginate(10);
+            
+            $data=[
+                'user'=>$user,
+                'tasks'=>$tasks,
+            ];
+            
+            $data +=$this->counts($user);
+            return view('users.show',$data);
+        }else{
+            return view('welcome');
+            
+          
+        }
+        
     }
 
     /**
@@ -52,12 +65,13 @@ class TasksController extends Controller
             'content'=> 'required|max:191',
             'status' => 'required|max:10',
             ]);
-       $task = new Task;
-        $task->content = $request->content;
-        $task->status  =$request->status;
-        $task->save();
+           $request->user()->tasks()->create([
+               'content'=>$request->content,
+               'status'=>$request->status,
+               ]);
+            return redirect()->back();
+           
 
-        return redirect('/');
     }
 
     /**
@@ -68,11 +82,16 @@ class TasksController extends Controller
      */
     public function show($id)
     {
-        $task = Task::find($id);
-
-        return view('Tasks.show', [
-            'task' => $task,
-        ]);
+        $user = Task::find($id);
+        $tasks=$user->tasks()->orderBy('created_at','desc')->pagignate(10);
+        
+        $data=[
+            'user'=>$user,
+            'tasks'=>$tasks,
+        ];
+        $data+=$this->conts($user);
+        return view ('Tasks.show', $data);
+    
     }
 
     /**
@@ -120,10 +139,13 @@ class TasksController extends Controller
      */
     public function destroy($id)
     {
+       $task=\App\Task::find($id);
        
-        $task = Task::find($id);
+        if(\Auth::user()->id ===$task->user_id){
+            
         $task->delete();
-
-        return redirect('/');
+        }
+        return redirect()->back();
     }
+    
 }
