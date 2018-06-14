@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use App\User; 
 
+use App\Task;
+
 class UsersController extends Controller
 {
     public function index()
@@ -20,10 +22,15 @@ class UsersController extends Controller
     
      public function show($id)
     {
-      $user = User::find($id);
-      $tasks= $user->tasks()->orderBy('created_at','desc')->paginate(10);
+        
+        
       
-      $data=[
+      if(\Auth::user()->id === $id){
+          
+          $user=User::find($id);
+          $task=$user->tasks()->orderBy('created_at','desc')->paginate(10);
+          
+           $data=[
           'user'=>$user,
           
           'tasks'=> $tasks,
@@ -31,7 +38,15 @@ class UsersController extends Controller
       
       $data +=$this->counts($user);
       
+         return view('users.show', $data);
+         
+      }
       
-        return view('users.show', $data);
+      else{
+          return redirect()->back();
+      }
+    
+      
+     
     }
 }

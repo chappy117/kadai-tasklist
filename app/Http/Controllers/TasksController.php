@@ -83,13 +83,14 @@ class TasksController extends Controller
     public function show($id)
     {
         $user = Task::find($id);
+        
         $tasks=$user->tasks()->orderBy('created_at','desc')->pagignate(10);
         
         $data=[
             'user'=>$user,
             'tasks'=>$tasks,
         ];
-        $data+=$this->conts($user);
+        $data+=$this->counts($user);
         return view ('Tasks.show', $data);
     
     }
@@ -102,11 +103,18 @@ class TasksController extends Controller
      */
     public function edit($id)
     {
+        
         $task = Task::find($id);
-
+       if(\Auth::user()->id ===$task->user_id){
+            
         return view('Tasks.edit', [
             'task' => $task,
         ]);
+       }
+        
+        else{
+            return redirect()->back();
+        }
 
     }
 
