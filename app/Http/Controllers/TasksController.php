@@ -82,16 +82,23 @@ class TasksController extends Controller
      */
     public function show($id)
     {
-        $user = Task::find($id);
+        $task = Task::find($id);
         
-        $tasks=$user->tasks()->orderBy('created_at','desc')->pagignate(10);
+        if(empty($task)){
+            return redirect('/');
+        }
+        else{
+        if(\Auth::user()->id===$task->user_id){
+            
+            return view('tasks.show',[
+                'task' =>$task,
+        ]);
+        }
         
-        $data=[
-            'user'=>$user,
-            'tasks'=>$tasks,
-        ];
-        $data+=$this->counts($user);
-        return view ('Tasks.show', $data);
+        else{
+                return redirect('/');
+        }   
+        }
     
     }
 
@@ -105,17 +112,24 @@ class TasksController extends Controller
     {
         
         $task = Task::find($id);
-       if(\Auth::user()->id ===$task->user_id){
-            
-        return view('Tasks.edit', [
+        
+    if(empty($task)){
+            return redirect('/');
+        }
+        
+       else{
+           if(\Auth::user()->id ===$task->user_id){
+               
+              return view('Tasks.edit', [
             'task' => $task,
         ]);
-       }
+       } 
         
         else{
             return redirect()->back();
         }
 
+     }
     }
 
     /**
@@ -123,8 +137,8 @@ class TasksController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+     */ 
+     
     public function update(Request $request, $id)
     {
         $this->validate($request,[
